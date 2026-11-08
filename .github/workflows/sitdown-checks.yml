@@ -1,4 +1,4 @@
-name: The Sitdown BBS checks
+name: The Empire State BBS checks
 on:
   push:
     branches: [main, feature/the-sitdown-branding, feature/phase2-radio-monitoring]

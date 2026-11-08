@@ -133,7 +133,6 @@ class JS8CallClient:
     def process(self, message):
         typ = message.get('type', '')
         value = message.get('value', '')
-        params = message.get('params', {})
 
         if not typ:
             return

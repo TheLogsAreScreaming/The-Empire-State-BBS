@@ -61,7 +61,6 @@ class WatchdogTests(unittest.TestCase):
 
     def test_late_reply_ignored_and_next_valid_reply_recovers(self):
         self.health.tick()
-        old_callback = self.interface.sendData.call_args.kwargs['onResponse']
         self.now = 15
         self.health.tick()
         self.reply()

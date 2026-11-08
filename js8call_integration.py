@@ -89,7 +89,7 @@ class JS8CallClient:
             ''')
         self.logger.info("Database tables created or verified.")
 
-    def insert_message(self, table, sender, recipient, message):
+    def insert_message(self, table, sender, receiver_or_group, message):
         """
         Inserts a message into the specified table in the database.
 
@@ -160,7 +160,7 @@ class JS8CallClient:
             self.logger.info(f"Received JS8Call message: {sender} to {receiver} - {msg}")
 
             if receiver in self.js8urgent:
-                self.insert_urgent('urgent', sender, receiver, msg)
+                self.insert_message('urgent', sender, receiver, msg)
                 notification_message = f"💥 URGENT JS8Call Message Received 💥\nFrom: {sender}\nCheck BBS for message"
                 send_message(notification_message, BROADCAST_NUM, self.interface)
             elif receiver in self.js8groups:

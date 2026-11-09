@@ -39,7 +39,7 @@ jobs:
         env:
           EMPIRE_GUI_TESTS: '1'
         run: |
-          python -m compileall -q sitdown_desktop.py sitdown_monitor.py empire_ui.py desktop_views.py empire_nodedir.py
+          python -m compileall -q sitdown_desktop.py sitdown_monitor.py empire_ui.py desktop_views.py empire_nodedir.py empire_backup.py
           python -m unittest discover -s tests -p 'test_*.py'
       - name: Generate Empire State app icon
         run: |

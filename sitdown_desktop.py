@@ -25,6 +25,7 @@ import zipfile
 from desktop_session import DesktopStore
 from empire_backup import BackupError, inspect_backup, restore_backup
 from empire_nodedir import NodeDirectory, count_label
+import empire_welcome
 from desktop_views import open_posts, open_nodes, PostsPage, NodesPage, page_header
 import empire_ui as ui
 
@@ -86,6 +87,7 @@ class SitdownApp:
         self.address = tk.StringVar()
         self.community = tk.StringVar(value="The Empire State BBS")
         self.welcome = tk.StringVar(value="AYO, welcome to the Empire State. One state. One network.")
+        self.welcome_on_radio = tk.BooleanVar(value=False)
         self.status = tk.StringVar(value="Stopped")
         self.radio_health = tk.StringVar(value="Radio health: unverified")
         self.appearance = tk.StringVar(value="system")
@@ -135,6 +137,7 @@ class SitdownApp:
                 self.address.set(data.get("address", ""))
                 self.community.set(data.get("community", "The Empire State BBS"))
                 self.welcome.set(data.get("welcome", self.welcome.get()))
+                self.welcome_on_radio.set(data.get("welcome_on_radio") is True)
                 self.attitude.set(data.get("attitude", "clean") if data.get("attitude") in ("clean", "spicy", "unfiltered") else "clean")
                 if data.get("appearance") in dict(ui.APPEARANCES):
                     self.appearance.set(data["appearance"])
@@ -148,6 +151,7 @@ class SitdownApp:
         CONFIG.write_text(json.dumps({
             "connection": self.connection.get(), "address": self.address.get(),
             "community": self.community.get(), "welcome": self.welcome.get(),
+            "welcome_on_radio": bool(self.welcome_on_radio.get()),
             "attitude": self.attitude.get(), "appearance": self.appearance.get(),
             "text_scale": self.text_scale.get(),
         }, indent=2), encoding="utf-8")
@@ -857,12 +861,16 @@ class SitdownApp:
         community = ui.Card(col, t, padding="xl")
         community.pack(fill="x")
         ui.section_header(community.body, t, "Community",
-                          "How your BBS introduces itself in this app.").pack(fill="x", anchor="w")
+                          "How your BBS introduces itself.").pack(fill="x", anchor="w")
         name_field = ui.Field(community.body, t, "Community name", self.community)
         name_field.pack(fill="x", pady=(SPACE["lg"], 0))
         welcome_field = ui.Field(community.body, t, "Welcome message", self.welcome,
-                                 "Saved locally. Sending it over the radio is not available yet.")
+                                 f"One line, up to {empire_welcome.MAX_BYTES} bytes.")
         welcome_field.pack(fill="x", pady=(SPACE["md"], 0))
+        ui.Toggle(community.body, t, "Send welcome over the radio", self.welcome_on_radio,
+                  "Each node receives it once per server run, before its first main menu. "
+                  "Uses extra airtime. Applies the next time the server starts.",
+                  command=lambda _value: self.mark_settings_dirty()).pack(fill="x", pady=(SPACE["md"], 0))
         save_row = ui.frame(community.body, t, "surface")
         save_row.pack(fill="x", pady=(SPACE["lg"], 0))
         self.settings_state = ui.text(save_row, t, "", "caption", "text_muted", "surface")
@@ -872,6 +880,11 @@ class SitdownApp:
                 name_field.set_error("Enter a community name.")
                 return
             name_field.set_error("")
+            if not empire_welcome.fits(self.welcome.get()):
+                welcome_field.set_error(f"Shorten this to {empire_welcome.MAX_BYTES} bytes or fewer "
+                                        f"(now {empire_welcome.byte_length(self.welcome.get())}).")
+                return
+            welcome_field.set_error("")
             try:
                 self.save()
             except OSError as exc:
@@ -1269,6 +1282,9 @@ class SitdownApp:
         if not unchanged:
             self.radio_health.set(label)
 
+    def welcome_environment(self):
+        return empire_welcome.launch_environment(bool(self.welcome_on_radio.get()), self.welcome.get())
+
     def attitude_message(self):
         return {
             "clean": "AYO! Welcome to the Empire State. Whaddya wanna do, boss?",
@@ -1479,7 +1495,8 @@ class SitdownApp:
             cmd += ["--host" if self.connection.get() == "tcp" else "--port", addr]
         try:
             self.supervisor = ServerSupervisor(cmd, DATA if getattr(sys, "frozen", False) else ROOT,
-                                               env_overrides={"EMPIRE_ATTITUDE": self.attitude.get(),
+                                               env_overrides={**self.welcome_environment(),
+                                                              "EMPIRE_ATTITUDE": self.attitude.get(),
                                                               "EMPIRE_DESKTOP_STORE": str(DATA / "desktop-state.db"),
                                                               "EMPIRE_NODE_DIRECTORY": str(DATA / "node-directory.db")})
             self.supervisor.start()

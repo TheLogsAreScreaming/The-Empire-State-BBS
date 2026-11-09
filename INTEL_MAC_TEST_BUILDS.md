@@ -4,7 +4,7 @@ Every push to `main`, pull request, or manual workflow dispatch runs **Intel Mac
 
 ## Download the latest test build
 
-1. Open [Intel Mac test build Actions](https://github.com/BaconDisk22/The-Empire-State-BBS/actions/workflows/intel-mac-test-build.yml).
+1. Open [Intel Mac test build Actions](https://github.com/TheLogsAreScreaming/The-Empire-State-BBS/actions/workflows/intel-mac-test-build.yml).
 2. Choose a **successful** run on `main` (or the branch you intend to test).
 3. Under **Artifacts**, download **The-Empire-State-BBS-Intel-Mac-Test**.
 4. Unzip the artifact, then open `The-Empire-State-BBS-Intel-Test.dmg`.

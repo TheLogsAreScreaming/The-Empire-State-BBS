@@ -1622,7 +1622,7 @@ if __name__ == "__main__":
         sys.exit(0)
     if "--sitdown-server" in sys.argv:
         sys.argv.remove("--sitdown-server")
-        import server  # Ensures PyInstaller includes the server and its dependencies.
+        import server  # noqa: F401 - Ensures PyInstaller includes the server and its dependencies.
         runpy.run_module("server", run_name="__main__")
         sys.exit(0)
     root = tk.Tk()

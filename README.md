@@ -4,9 +4,9 @@
 
 *From the Adirondacks to the Atlantic. Everybody's connected.*
 
-A statewide, old-school New York-themed edition of the Meshtastic bulletin board project, inspired by [THE SITDOWN BBS](https://github.com/BaconDisk22/The-Sitdown-BBS).
+A statewide, old-school New York-themed edition of the Meshtastic bulletin board project, inspired by [THE SITDOWN BBS](https://github.com/TheLogsAreScreaming/The-Sitdown-BBS).
 
-> **Project status:** Intel Mac beta.6 is available, and the NYC command-center redesign is merged into the main branch. Automated tests, Intel packaging and a bundled-app smoke test are available; real-radio delivery and normal Finder launch still require hardware verification. [Releases](https://github.com/BaconDisk22/The-Empire-State-BBS/releases).
+> **Project status:** Intel Mac beta builds are published as pre-releases and include the NYC command-center redesign and the app's own node list. Automated tests, Intel packaging and a bundled-app smoke test are available; real-radio delivery and normal Finder launch still require hardware verification. [Releases](https://github.com/TheLogsAreScreaming/The-Empire-State-BBS-Releases/releases).
 
 ## Statewide identity
 
@@ -46,7 +46,7 @@ More pages, in both themes and with labelled sample data, are in [`docs/images/t
 
 ## Opening the app on macOS
 
-After downloading the Intel Mac `.dmg` from [GitHub Releases](https://github.com/BaconDisk22/The-Empire-State-BBS/releases), install **The Empire State BBS** in Applications.
+After downloading the Intel Mac `.dmg` from [GitHub Releases](https://github.com/TheLogsAreScreaming/The-Empire-State-BBS-Releases/releases), install **The Empire State BBS** in Applications.
 
 1. Open **Applications** in Finder.
 2. **Control-click** **The Empire State BBS**.
@@ -57,7 +57,7 @@ These steps address macOS security prompts for an unsigned app. If the icon boun
 
 ## Source and licensing
 
-**The Empire State BBS** is an independently branded New York adaptation of [The Sitdown BBS](https://github.com/BaconDisk22/The-Sitdown-BBS), which is based on **TC²-BBS by TheCommsChannel**. Thank you to TheCommsChannel and the original contributors for the BBS foundation. Their work made this edition possible.\n\nThe original source credits and copyright notices remain in the source files. This project continues to be distributed under the **GNU General Public License v3.0**; see [LICENSE](LICENSE). New York-themed names, menus, artwork and desktop presentation are specific to this edition.
+**The Empire State BBS** is an independently branded New York adaptation of [The Sitdown BBS](https://github.com/TheLogsAreScreaming/The-Sitdown-BBS), which is based on **TC²-BBS by TheCommsChannel**. Thank you to TheCommsChannel and the original contributors for the BBS foundation. Their work made this edition possible.\n\nThe original source credits and copyright notices remain in the source files. This project continues to be distributed under the **GNU General Public License v3.0**; see [LICENSE](LICENSE). New York-themed names, menus, artwork and desktop presentation are specific to this edition.
 
 **The Sitdown BBS remains an independent New Jersey project.**
 

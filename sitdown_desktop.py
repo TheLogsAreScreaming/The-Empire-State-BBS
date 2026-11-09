@@ -23,6 +23,7 @@ from radio_health import radio_health_label
 from radio_diagnostics import available_serial_ports, check_serial_target, check_tcp_target
 import zipfile
 from desktop_session import DesktopStore
+from empire_backup import BackupError, inspect_backup, restore_backup
 from empire_nodedir import NodeDirectory, count_label
 from desktop_views import open_posts, open_nodes, PostsPage, NodesPage, page_header
 import empire_ui as ui
@@ -330,6 +331,7 @@ class SitdownApp:
         server_box.add_command(label="Find USB radios", command=self.list_ports)
         server_box.add_separator()
         server_box.add_command(label="Back up data…", command=self.backup)
+        server_box.add_command(label="Restore from backup…", command=self.restore)
         menubar.add_cascade(label="Server", menu=server_box)
         window_menu = tk.Menu(menubar, name="window", tearoff=0)
         menubar.add_cascade(label="Window", menu=window_menu)
@@ -920,6 +922,7 @@ class SitdownApp:
         row = ui.frame(data.body, t, "surface")
         row.pack(fill="x", pady=(SPACE["lg"], 0))
         ui.Button(row, t, "Back up data…", self.backup, "secondary", "archive").pack(side="left")
+        ui.Button(row, t, "Restore…", self.restore, "secondary").pack(side="left", padx=(SPACE["sm"], 0))
         ui.Button(row, t, "Show data folder", self.reveal_data, "ghost", "folder").pack(
             side="left", padx=(SPACE["sm"], 0))
         ui.Button(row, t, "Legacy drafts…", self.list_local_mail_drafts, "ghost").pack(
@@ -1591,6 +1594,52 @@ class SitdownApp:
         self.log(f"Backup saved ({len(written)} files). Treat backups as sensitive; "
                  "they may contain messages and keys.")
         self.toast(f"Backup saved — {len(written)} file{'s' if len(written) != 1 else ''}")
+
+    def restore_destination(self, name):
+        """A source checkout keeps its server files beside the code; the packaged app uses DATA."""
+        beside_code = ROOT / name
+        if not getattr(sys, "frozen", False) and name != CONFIG.name and beside_code.exists():
+            return beside_code
+        return DATA / name
+
+    def server_running(self):
+        return bool(self.supervisor and self.supervisor.running)
+
+    def restore(self):
+        stop_first = "Stop the BBS server before restoring, so it isn't using the files being replaced."
+        if self.server_running():
+            messagebox.showerror("Stop the server first", stop_first, parent=self.root)
+            return
+        source = filedialog.askopenfilename(parent=self.root, filetypes=[("Zip archive", "*.zip")])
+        if not source:
+            return
+        try:
+            names = inspect_backup(source)
+        except BackupError as exc:
+            messagebox.showerror("Can't restore this backup", str(exc), parent=self.root)
+            return
+        if not messagebox.askyesno(
+                "Replace current data?",
+                "These files will be replaced:\n\n" + "\n".join(names) +
+                "\n\nA safety copy of your current versions is saved in the data folder first. "
+                "Files not listed are left alone.", parent=self.root, icon="warning"):
+            return
+        if self.server_running():
+            messagebox.showerror("Stop the server first", stop_first, parent=self.root)
+            return
+        try:
+            result = restore_backup(source, self.restore_destination, DATA)
+        except BackupError as exc:
+            messagebox.showerror("Restore failed", str(exc), parent=self.root)
+            return
+        self.load()
+        self.refresh_node_count()
+        saved = f" Safety copy: {result.safety_copy.name}." if result.safety_copy else ""
+        self.log(f"Restored {len(result.names)} files from backup.{saved}")
+        messagebox.showinfo("Backup restored",
+                            f"Restored {len(result.names)} files.{saved}\n\n"
+                            "Quit and reopen the app to finish loading the restored data.",
+                            parent=self.root)
 
     def close(self):
         running = bool(self.supervisor and self.supervisor.running)

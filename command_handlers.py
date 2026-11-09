@@ -4,7 +4,6 @@ import os
 import random
 import time
 
-from meshtastic import BROADCAST_NUM
 
 from db_operations import (
     add_bulletin, add_mail, delete_mail,
@@ -100,7 +99,7 @@ def handle_mail_command(sender_id, interface):
 
 
 def handle_bulletin_command(sender_id, interface):
-    response = f"📰 The Social Club Boards\nWhich board would you like to enter?\n[G]eneral  [I]nfo  [N]ews  [U]rgent"
+    response = "📰 The Social Club Boards\nWhich board would you like to enter?\n[G]eneral  [I]nfo  [N]ews  [U]rgent"
     send_message(response, sender_id, interface)
     update_user_state(sender_id, {'command': 'BULLETIN_MENU', 'step': 1})
 
@@ -239,7 +238,7 @@ def handle_bb_steps(sender_id, message, step, state, interface, bbs_nodes):
                 update_user_state(sender_id, None)
                 return
             sender_short_name = node_info['user'].get('shortName', f"Node {sender_id}")
-            unique_id = add_bulletin(board, sender_short_name, subject, content, bbs_nodes, interface)
+            add_bulletin(board, sender_short_name, subject, content, bbs_nodes, interface)
             send_message(f"Your bulletin '{subject}' has been posted to {board}.\n(╯°□°)╯📄📌[{board}]", sender_id, interface)
             handle_bb_steps(sender_id, 'e', 1, state, interface, bbs_nodes)
         else:
@@ -446,8 +445,8 @@ def handle_send_mail_command(sender_id, message, interface, bbs_nodes):
         recipient_name = get_node_name(recipient_id, interface)
         sender_short_name = get_node_short_name(get_node_id_from_num(sender_id, interface), interface)
 
-        unique_id = add_mail(get_node_id_from_num(sender_id, interface), sender_short_name, recipient_id, subject,
-                             content, bbs_nodes, interface)
+        add_mail(get_node_id_from_num(sender_id, interface), sender_short_name, recipient_id, subject,
+                 content, bbs_nodes, interface)
         send_message(f"Mail has been sent to {recipient_name}.", sender_id, interface)
 
         notification_message = f"You have a new mail message from {sender_short_name}. Check your mailbox by responding to this message with CM."
@@ -539,7 +538,7 @@ def handle_post_bulletin_command(sender_id, message, interface, bbs_nodes):
         _, board_name, subject, content = parts
         sender_short_name = get_node_short_name(get_node_id_from_num(sender_id, interface), interface)
 
-        unique_id = add_bulletin(board_name, sender_short_name, subject, content, bbs_nodes, interface)
+        add_bulletin(board_name, sender_short_name, subject, content, bbs_nodes, interface)
         send_message(f"Your bulletin '{subject}' has been posted to {board_name}.", sender_id, interface)
 
 

@@ -15,7 +15,7 @@ The existing one-letter menu options and existing quick commands remain availabl
 
 ## Design palette
 
-`sitdown_theme.json` defines the **future desktop UI** palette: charcoal and black, Italian red and green, mozzarella white, diner gold. There are **no Joker colors**. The JSON is a design resource; the Python server currently has no desktop GUI to render it.
+`sitdown_theme.json` is a design resource inherited from The Sitdown BBS. The Empire State desktop app defines its own NYC palette in `empire_ui.py`; see `docs/UI_DESIGN.md`.
 
 ## Development
 

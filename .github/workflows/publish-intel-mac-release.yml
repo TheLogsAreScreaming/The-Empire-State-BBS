@@ -57,7 +57,7 @@ jobs:
       - name: Validate source and tests
         run: |
           test "$(uname -m)" = "x86_64"
-          python -m compileall -q sitdown_desktop.py sitdown_monitor.py command_handlers.py empire_nodedir.py empire_welcome.py
+          python -m compileall -q sitdown_desktop.py sitdown_monitor.py command_handlers.py empire_nodedir.py empire_backup.py empire_welcome.py
           python -m unittest discover -s tests -p 'test_*.py'
       - name: Generate Empire State icon
         run: |

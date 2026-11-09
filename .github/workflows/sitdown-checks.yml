@@ -21,7 +21,7 @@ jobs:
             message_processing.py desktop_views.py desktop_session.py \
             radio_diagnostics.py radio_health.py tcp_health.py \
             config_init.py mail_outbox.py grapevine_protocol.py \
-            empire_ui.py empire_nodedir.py scripts/capture_ui_tour.py
+            empire_ui.py empire_nodedir.py empire_welcome.py scripts/capture_ui_tour.py
           python -m compileall -q tests
       - name: Unit tests
         env:

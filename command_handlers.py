@@ -12,11 +12,14 @@ from db_operations import (
     get_mail, get_mail_content,
     add_channel, get_channels, get_sender_id_by_mail_id
 )
+from empire_welcome import WelcomeGate
 from utils import (
     get_node_id_from_num, get_node_info,
     get_node_short_name, send_message,
     update_user_state
 )
+
+WELCOMES = WelcomeGate()
 
 # Read the configuration for menu options
 config = configparser.ConfigParser()
@@ -75,6 +78,9 @@ def handle_help_command(sender_id, interface, menu_name=None):
             response = build_menu(utilities_menu_items, "🛠️ The Backroom")
     else:
         update_user_state(sender_id, {'command': 'MAIN_MENU', 'step': 1})  # Reset to main menu state
+        welcome = WELCOMES.take(sender_id)
+        if welcome:
+            send_message(welcome, sender_id, interface)
         mail = get_mail(get_node_id_from_num(sender_id, interface))
         response = build_menu(main_menu_items, empire_main_menu_heading(len(mail)))
     send_message(response, sender_id, interface)
